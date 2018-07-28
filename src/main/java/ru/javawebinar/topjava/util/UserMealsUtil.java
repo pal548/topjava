@@ -37,11 +37,8 @@ public class UserMealsUtil {
             LocalDate day = LocalDate.of(m.getDateTime().getYear(), m.getDateTime().getMonth(), m.getDateTime().getDayOfMonth());
             map.merge(day, m.getCalories(), (o, n) -> o + n);
 
+            map_exceed.putIfAbsent(day, new MyBoolean());
             MyBoolean b = map_exceed.get(day);
-            if (b == null) {
-                b = new MyBoolean();
-                map_exceed.put(day, b);
-            }
             b.setValue(map.get(day) > caloriesPerDay);
             result.add(new UserMealWithExceed(m.getDateTime(), m.getDescription(), m.getCalories(), b));
         }
