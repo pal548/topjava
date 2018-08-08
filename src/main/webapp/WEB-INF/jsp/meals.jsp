@@ -11,6 +11,7 @@
         <th>Время</th>
         <th>Описание</th>
         <th>Калории</th>
+        <th colspan="2">Действия</th>
     </tr>
     <% DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); %>
     <c:forEach items="${meals}" var="meal">
@@ -19,6 +20,9 @@
             <td><%=df.format(meal.getDateTime())%></td>
             <td>${meal.description}</td>
             <td style="text-align: center">${meal.calories}</td>
+            <td style="text-align: center"><a href="meals?action=edit&meal">Добавить</a></td>
+            <td style="text-align: center"><a href="meals?action=delete&meal">Добавить</a></td>
+
         </tr>
     </c:forEach>
 </table>

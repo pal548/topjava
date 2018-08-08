@@ -30,8 +30,18 @@ public class MealServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<MealWithExceed> meals = MealsUtil.getFilteredWithExceeded(MEALS, LocalTime.of(0, 0), LocalTime.of(23, 59), 2000);
-        request.setAttribute("meals", meals);
-        request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp").forward(request, response);
+        String action = request.getParameter("action");
+        if (action == null) {
+            List<MealWithExceed> meals = MealsUtil.getFilteredWithExceeded(MEALS, LocalTime.of(0, 0), LocalTime.of(23, 59), 2000);
+            request.setAttribute("meals", meals);
+            request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp").forward(request, response);
+            return;
+        }
+        switch (action) {
+            case "delete" :
+
+                break;
+        }
+
     }
 }

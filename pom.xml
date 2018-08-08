@@ -73,6 +73,12 @@
             <version>1.2</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 
     <profiles>
