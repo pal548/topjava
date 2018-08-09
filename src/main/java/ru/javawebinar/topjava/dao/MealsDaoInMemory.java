@@ -27,7 +27,7 @@ public class MealsDaoInMemory implements MealsDao {
     }
 
     @Override
-    public void save(Meal meal) {
+    public void insert(Meal meal) {
         int id = counter.addAndGet(1);
         meal.setId(id);
         map.put(id, meal);
@@ -35,7 +35,9 @@ public class MealsDaoInMemory implements MealsDao {
 
     @Override
     public void update(int id, Meal meal) {
-        map.replace(id, meal);
+        if (map.replace(id, meal) == null) {
+            throw new NotFoundException(id);
+        }
     }
 
     @Override

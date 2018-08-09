@@ -1,12 +1,15 @@
 package ru.javawebinar.topjava.dao;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import ru.javawebinar.topjava.exceptions.NotFoundException;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class MealsDaoTest {
@@ -27,9 +30,9 @@ public class MealsDaoTest {
 
     @Before
     public void setUp() throws Exception {
-        mealsDao.save(meal1);
-        mealsDao.save(meal2);
-        mealsDao.save(meal3);
+        mealsDao.insert(meal1);
+        mealsDao.insert(meal2);
+        mealsDao.insert(meal3);
     }
 
     @Test
@@ -38,21 +41,38 @@ public class MealsDaoTest {
         assertEquals(meal1, meal);
     }
 
-    @Test(expected = NotFo)
-    public void save() {
+    @Ignore
+    @Test
+    public void insert() {
 
     }
 
     @Test
     public void update() {
+        Meal meal = new Meal(LocalDateTime.of(2018, 8, 9, 12, 0), "Ланч", 1000);
+        meal.setId(meal1.getId());
+        mealsDao.update(meal.getId(), meal);
+        assertEquals(meal, mealsDao.get(meal.getId()));
     }
 
-    @Test
-    public void delete() {
+    @Test(expected = NotFoundException.class)
+    public void updateFail() {
+        Meal meal = new Meal(LocalDateTime.of(2018, 8, 9, 12, 0), "Ланч", 1000);
+        meal.setId(-1);
+        mealsDao.update(meal.getId(), meal);
+    }
 
+    @Test(expected = NotFoundException.class)
+    public void delete() {
+        mealsDao.delete(meal1.getId());
+        mealsDao.get(meal1.getId());
     }
 
     @Test
     public void getAll() {
+        Collection<Meal> col = mealsDao.getAll();
+        assertEquals(meal1, mealsDao.get(meal1.getId()));
+        assertEquals(meal2, mealsDao.get(meal2.getId()));
+        assertEquals(meal3, mealsDao.get(meal3.getId()));
     }
 }
