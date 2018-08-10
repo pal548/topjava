@@ -58,7 +58,7 @@ public class MealServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            List<MealWithExceed> meals = MealsUtil.getFilteredWithExceeded(mealsDao.getAll(), LocalTime.of(0, 0), LocalTime.of(23, 59), 2000);
+            List<MealWithExceed> meals = MealsUtil.getFilteredWithExceeded(mealsDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
             meals.sort(Comparator.comparing(MealWithExceed::getDateTime));
             request.setAttribute("meals", meals);
             request.setAttribute("df", df);
