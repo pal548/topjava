@@ -20,11 +20,11 @@
             <td><%=df.format(meal.getDateTime())%></td>
             <td>${meal.description}</td>
             <td style="text-align: center">${meal.calories}</td>
-            <td style="text-align: center"><a href="meals?action=edit&meal">Добавить</a></td>
-            <td style="text-align: center"><a href="meals?action=delete&meal">Добавить</a></td>
-
+            <td style="text-align: center"><a href="meals?action=edit&id=${meal.id}">Редактировать</a></td>
+            <td style="text-align: center"><a href="meals?action=delete&id=${meal.id}">Удалить</a></td>
         </tr>
     </c:forEach>
 </table>
+<a href="meals?action=add">Добавить</a>
 </body>
 </html>
