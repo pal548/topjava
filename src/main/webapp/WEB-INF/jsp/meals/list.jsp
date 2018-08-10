@@ -13,10 +13,10 @@
         <th>Калории</th>
         <th colspan="2">Действия</th>
     </tr>
-    <% DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); %>
     <c:forEach items="${meals}" var="meal">
         <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealWithExceed"/>
-        <tr style='color: <%= meal.isExceed() ? "red" : "green" %>'>
+        <tr style='color: ${meal.exceed ? "red" : "green"}'>
+            <jsp:useBean id="df" type="java.time.format.DateTimeFormatter" scope="request"/>
             <td><%=df.format(meal.getDateTime())%></td>
             <td>${meal.description}</td>
             <td style="text-align: center">${meal.calories}</td>

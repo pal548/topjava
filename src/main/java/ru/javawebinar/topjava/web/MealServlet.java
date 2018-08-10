@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +26,7 @@ public class MealServlet extends HttpServlet {
     public static final String MEALS_LIST_JSP = "/WEB-INF/jsp/meals/list.jsp";
     public static final String MEALS_EDIT_JSP = "/WEB-INF/jsp/meals/add-edit.jsp";
     private MealsDao mealsDao = new MealsDaoInMemory();
+    private DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     {
         mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
@@ -59,6 +61,7 @@ public class MealServlet extends HttpServlet {
             List<MealWithExceed> meals = MealsUtil.getFilteredWithExceeded(mealsDao.getAll(), LocalTime.of(0, 0), LocalTime.of(23, 59), 2000);
             meals.sort(Comparator.comparing(MealWithExceed::getDateTime));
             request.setAttribute("meals", meals);
+            request.setAttribute("df", df);
             request.getRequestDispatcher(MEALS_LIST_JSP).forward(request, response);
             return;
         }
