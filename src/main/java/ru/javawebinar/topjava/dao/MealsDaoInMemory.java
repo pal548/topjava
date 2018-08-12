@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.dao;
 
-import ru.javawebinar.topjava.exceptions.NotFoundException;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.util.*;
@@ -10,24 +9,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealsDaoInMemory implements MealsDao {
     private final ConcurrentMap<Integer, Meal> map = new ConcurrentHashMap<>();
-    private static final AtomicInteger counter = new AtomicInteger();
-
-    {
-        counter.set(0);
-    }
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     @Override
     public Meal get(int id) {
-        Meal meal = map.get(id);
-        if (meal == null) {
-            throw new NotFoundException(id);
-        } else {
-            return meal;
-        }
+        return map.get(id);
     }
 
     @Override
-    public void insert(Meal meal) {
+    public void save(Meal meal) {
         int id = counter.addAndGet(1);
         meal.setId(id);
         map.put(id, meal);
@@ -35,16 +25,12 @@ public class MealsDaoInMemory implements MealsDao {
 
     @Override
     public void update(int id, Meal meal) {
-        if (map.replace(id, meal) == null) {
-            throw new NotFoundException(id);
-        }
+        map.replace(id, meal);
     }
 
     @Override
     public void delete(int id) {
-        if (map.remove(id) == null) {
-            throw new NotFoundException(id);
-        }
+        map.remove(id);
     }
 
     @Override

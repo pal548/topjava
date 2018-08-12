@@ -3,13 +3,13 @@ package ru.javawebinar.topjava.dao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import ru.javawebinar.topjava.exceptions.NotFoundException;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 
 public class MealsDaoTest {
@@ -30,9 +30,9 @@ public class MealsDaoTest {
 
     @Before
     public void setUp() throws Exception {
-        mealsDao.insert(meal1);
-        mealsDao.insert(meal2);
-        mealsDao.insert(meal3);
+        mealsDao.save(meal1);
+        mealsDao.save(meal2);
+        mealsDao.save(meal3);
     }
 
     @Test
@@ -55,17 +55,11 @@ public class MealsDaoTest {
         assertEquals(meal, mealsDao.get(meal.getId()));
     }
 
-    @Test(expected = NotFoundException.class)
-    public void updateFail() {
-        Meal meal = new Meal(LocalDateTime.of(2018, 8, 9, 12, 0), "Ланч", 1000);
-        meal.setId(-1);
-        mealsDao.update(meal.getId(), meal);
-    }
-
-    @Test(expected = NotFoundException.class)
+    @Test
     public void delete() {
         mealsDao.delete(meal1.getId());
-        mealsDao.get(meal1.getId());
+        Meal meal = mealsDao.get(meal1.getId());
+        assertNull(meal);
     }
 
     @Test

@@ -16,8 +16,8 @@
     <c:forEach items="${meals}" var="meal">
         <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealWithExceed"/>
         <tr style='color: ${meal.exceed ? "red" : "green"}'>
-            <jsp:useBean id="df" type="java.time.format.DateTimeFormatter" scope="request"/>
-            <td><%=df.format(meal.getDateTime())%></td>
+            <jsp:useBean id="DATE_TIME_FORMATTER" type="java.time.format.DateTimeFormatter" scope="request"/>
+            <td><%=DATE_TIME_FORMATTER.format(meal.getDateTime())%></td>
             <td>${meal.description}</td>
             <td style="text-align: center">${meal.calories}</td>
             <td style="text-align: center"><a href="meals?action=edit&id=${meal.id}">Редактировать</a></td>

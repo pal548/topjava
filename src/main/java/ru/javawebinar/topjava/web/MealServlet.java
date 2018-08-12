@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,16 +24,18 @@ public class MealServlet extends HttpServlet {
     public static final String MEALS = "meals";
     public static final String MEALS_LIST_JSP = "/WEB-INF/jsp/meals/list.jsp";
     public static final String MEALS_EDIT_JSP = "/WEB-INF/jsp/meals/add-edit.jsp";
-    private MealsDao mealsDao = new MealsDaoInMemory();
-    private DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private MealsDao mealsDao;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    {
-        mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
-        mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
-        mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
-        mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
-        mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
-        mealsDao.insert(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
+    @Override
+    public void init() throws ServletException {
+        mealsDao = new MealsDaoInMemory();
+        mealsDao.save(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
+        mealsDao.save(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
+        mealsDao.save(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
+        mealsDao.save(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
+        mealsDao.save(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
+        mealsDao.save(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,7 +47,7 @@ public class MealServlet extends HttpServlet {
         int cal = Integer.parseInt(request.getParameter("calories"));
         Meal meal = new Meal(dateTime, description, cal);
         if (action.equals("add")) {
-            mealsDao.insert(meal);
+            mealsDao.save(meal);
         } else {
             int id = Integer.parseInt(request.getParameter("id"));
             meal.setId(id);
@@ -59,9 +60,8 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
         if (action == null) {
             List<MealWithExceed> meals = MealsUtil.getFilteredWithExceeded(mealsDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
-            meals.sort(Comparator.comparing(MealWithExceed::getDateTime));
             request.setAttribute("meals", meals);
-            request.setAttribute("df", df);
+            request.setAttribute("DATE_TIME_FORMATTER", DATE_TIME_FORMATTER);
             request.getRequestDispatcher(MEALS_LIST_JSP).forward(request, response);
             return;
         }
@@ -80,11 +80,9 @@ public class MealServlet extends HttpServlet {
                 response.sendRedirect(MEALS);
                 break;
             case "edit":
+                Meal meal = mealsDao.get(id);
+                request.setAttribute("meal", meal);
             case "add":
-                if (action.equals("edit")) {
-                    Meal meal = mealsDao.get(id);
-                    request.setAttribute("meal", meal);
-                }
                 request.getRequestDispatcher(MEALS_EDIT_JSP).forward(request, response);
                 break;
         }
