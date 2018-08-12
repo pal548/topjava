@@ -41,8 +41,7 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding(StandardCharsets.UTF_8.toString());
         String action = request.getParameter("action");
-        LocalDateTime dateTime = LocalDateTime.of(LocalDate.parse(request.getParameter("date")),
-                LocalTime.parse(request.getParameter("time")));
+        LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("datetime"), DATE_TIME_FORMATTER);
         String description = request.getParameter("description");
         int cal = Integer.parseInt(request.getParameter("calories"));
         Meal meal = new Meal(dateTime, description, cal);
@@ -80,9 +79,15 @@ public class MealServlet extends HttpServlet {
                 response.sendRedirect(MEALS);
                 break;
             case "edit":
-                Meal meal = mealsDao.get(id);
-                request.setAttribute("meal", meal);
             case "add":
+                Meal meal;
+                if (action.equals("edit")) {
+                    meal = mealsDao.get(id);
+                } else {
+                    meal = new Meal(LocalDateTime.of(1,1,1,0,0), "", 0);
+                }
+                request.setAttribute("meal", meal);
+                request.setAttribute("dateTimeFormatter", DATE_TIME_FORMATTER);
                 request.getRequestDispatcher(MEALS_EDIT_JSP).forward(request, response);
                 break;
         }

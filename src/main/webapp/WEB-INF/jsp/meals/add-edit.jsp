@@ -9,20 +9,15 @@
 <body>
     <h3>${title}</h3>
     <form method="post" action="meals" enctype="application/x-www-form-urlencoded">
-        <c:if test="${!adding}">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-        </c:if>
+        <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
         <input type="hidden" name="action" value="${param.action}">
         <input type="hidden" name="id" value="${meal.id}">
-
+        <jsp:useBean id="dateTimeFormatter" type="java.time.format.DateTimeFormatter" scope="request"/>
+        <jsp:useBean id="adding" type="java.lang.Boolean"/>
         <table>
             <tr>
-                <td style="text-align: right">Дата</td>
-                <td><input type="date" name="date" required value="${adding ? '' : meal.dateTime.toLocalDate().toString()}"><td></td>
-            </tr>
-            <tr>
-                <td style="text-align: right">Время</td>
-                <td><input type="time" name="time" required value="${adding ? '' : meal.dateTime.toLocalTime().toString()}"><td></td>
+                <td style="text-align: right">Дата и время</td>
+                <td><input type="text" name="datetime" required value='<%=adding ? "" : dateTimeFormatter.format(meal.getDateTime())%>'></td>
             </tr>
             <tr>
                 <td style="text-align: right">Описание</td>
