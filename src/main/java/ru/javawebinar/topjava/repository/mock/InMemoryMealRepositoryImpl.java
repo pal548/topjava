@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryMealRepositoryImpl implements MealRepository {
-    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -18,19 +18,21 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(int userId, Meal meal) {
+        Map<Integer, Meal> mealsMap = getUserMealsMap(userId);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
+            mealsMap.put(meal.getId(), meal);
             return meal;
         }
         // treat case: update, but absent in storage
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return mealsMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public void delete(int id) {
-        repository.remove(id);
+    public void delete(int userId, int id) {
+        Map<Integer, Meal> mealsMap = getUserMealsMap(userId);
+        mealsMap.remove(id);
     }
 
     @Override
@@ -41,6 +43,15 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public Collection<Meal> getAll() {
         return repository.values();
+    }
+
+    private Map<Integer, Meal> getUserMealsMap(int userId) {
+        Map<Integer, Meal> map = repository.get(userId);
+        if (map == null) {
+            map = new ConcurrentHashMap<>();
+            repository.put(userId, map);
+        }
+        return map;
     }
 }
 
