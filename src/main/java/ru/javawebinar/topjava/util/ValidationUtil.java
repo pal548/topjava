@@ -10,8 +10,16 @@ public class ValidationUtil {
         return checkNotFound(object, "id=" + id);
     }
 
+    public static <T> T checkNotFoundWithIdOfUserId(T object, int id, int userId) {
+        return checkNotFound(object, "userId=" + userId +  ", id=" + id);
+    }
+
     public static void checkNotFoundWithId(boolean found, int id) {
         checkNotFound(found, "id=" + id);
+    }
+
+    public static void checkNotFoundWithIdOfUserId(boolean found, int id, int userId) {
+        checkNotFound(found, "userId=" + userId +  ", id=" + id);
     }
 
     public static <T> T checkNotFound(T object, String msg) {
