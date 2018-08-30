@@ -20,6 +20,20 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
+    <form action="meals" method="get">
+        <p>
+            <b>Фильтр по дате:</b> <br/>
+            C: <input type="date" name="dateBeg"/>
+            по: <input type="date" name="dateEnd"/>
+        </p>
+        <p>
+            <b>Фильтр по времени:</b> <br/>
+            C: <input type="time" name="timeBeg"/>
+            по: <input type="time" name="timeEnd"/>
+        </p>
+        <br/>
+        <input type="submit" value="Применить фильтр"/>
+    </form>
     <a href="meals?action=create">Add Meal</a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">

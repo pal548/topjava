@@ -83,6 +83,9 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
+                String dateBegS = request.getParameter("dateBeg");
+                String timeBegS = request.getParameter("timeBeg");
+                LocalDateTime dateDate
                 request.setAttribute("meals", controller.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
