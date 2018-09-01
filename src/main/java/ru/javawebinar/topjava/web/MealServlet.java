@@ -5,9 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -16,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -84,9 +83,14 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 String dateBegS = request.getParameter("dateBeg");
+                String dateEndS = request.getParameter("dateEnd");
                 String timeBegS = request.getParameter("timeBeg");
-                LocalDateTime dateDate
-                request.setAttribute("meals", controller.getAll());
+                String timeEndS = request.getParameter("timeEnd");
+                LocalDate dateBeg = dateBegS == null || dateBegS.isEmpty() ? null : LocalDate.parse(dateBegS);
+                LocalDate dateEnd = dateEndS == null || dateEndS.isEmpty() ? null : LocalDate.parse(dateEndS);
+                LocalTime timeBeg = timeBegS == null || timeBegS.isEmpty() ? null : LocalTime.parse(timeBegS);
+                LocalTime timeEnd = timeEndS == null || timeEndS.isEmpty() ? null : LocalTime.parse(timeEndS);
+                request.setAttribute("meals", controller.getAllFiltered(dateBeg, dateEnd, timeBeg, timeEnd));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

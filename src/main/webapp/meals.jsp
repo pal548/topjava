@@ -23,13 +23,13 @@
     <form action="meals" method="get">
         <p>
             <b>Фильтр по дате:</b> <br/>
-            C: <input type="date" name="dateBeg"/>
-            по: <input type="date" name="dateEnd"/>
+            C: <input type="date" name="dateBeg" value="${param.dateBeg}"/>
+            по: <input type="date" name="dateEnd" value="${param.dateEnd}"/>
         </p>
         <p>
             <b>Фильтр по времени:</b> <br/>
-            C: <input type="time" name="timeBeg"/>
-            по: <input type="time" name="timeEnd"/>
+            C: <input type="time" name="timeBeg" value="${param.timeBeg}"/>
+            по: <input type="time" name="timeEnd" value="${param.timeEnd}"/>
         </p>
         <br/>
         <input type="submit" value="Применить фильтр"/>
