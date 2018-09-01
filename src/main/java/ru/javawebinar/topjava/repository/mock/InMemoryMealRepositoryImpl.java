@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.mock;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -29,9 +30,8 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     public Meal save(int userId, Meal meal) {
         Map<Integer, Meal> mealsMap = getUserMealsMap(userId);
         if (meal.isNew()) {
-            meal.setId(counter.incrementAndGet());
-            mealsMap.put(meal.getId(), meal);
-            return meal;
+            return mealsMap.computeIfAbsent(counter.incrementAndGet(), k -> {meal.setId(k);
+                                                                             return meal;});
         }
         // treat case: update, but absent in storage
         return mealsMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
@@ -39,31 +39,28 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int userId, int id) {
-        Map<Integer, Meal> mealsMap = getUserMealsMap(userId);
-        return mealsMap.remove(id) != null;
+        Map<Integer, Meal> mealsMap = repository.get(userId);
+        return mealsMap != null && (mealsMap.remove(id) != null);
     }
 
     @Override
     public Meal get(int userId, int id) {
-        return getUserMealsMap(userId).get(id);
+        Map<Integer, Meal> mealsMap = repository.get(userId);
+        return mealsMap == null ? null : mealsMap.get(id);
     }
 
     @Override
-    public List<Meal> getAll(int userId) {
-        return getAllFiltered(userId, null, null, null, null);
+    public List<MealWithExceed> getAll(int userId, int calories) {
+        return doGetAllWithExceeded(userId, LocalDate.MIN, LocalDate.MAX, LocalTime.MIN, LocalTime.MAX, calories);
     }
 
     @Override
-    public List<Meal> getAllFiltered(int userId, LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2) {
+    public List<MealWithExceed> getAllFiltered(int userId, LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2, int calories) {
         LocalDate date11 = date1 == null ? LocalDate.MIN : date1;
         LocalDate date22 = date2 == null ? LocalDate.MAX : date2;
         LocalTime time11 = time1 == null ? LocalTime.MIN : time1;
         LocalTime time22 = time2 == null ? LocalTime.MAX : time2;
-        return getUserMealsMap(userId).values().stream()
-                .filter(meal -> DateTimeUtil.isBetween(meal.getTime(), time11, time22)
-                                && DateTimeUtil.isBetween(meal.getDate(), date11, date22))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(toList());
+        return doGetAllWithExceeded(userId, date11, date22, time11, time22, calories);
     }
 
     private Map<Integer, Meal> getUserMealsMap(int userId) {
@@ -74,5 +71,14 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         }
         return map;
     }
+
+    private List<MealWithExceed> doGetAllWithExceeded(int userId, LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2, int calories) {
+        return MealsUtil.getWithExceeded(getUserMealsMap(userId).values(), calories).stream()
+                .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime().toLocalTime(), time1, time2)
+                        && DateTimeUtil.isBetween(meal.getDateTime().toLocalDate(), date1, date2))
+                .sorted(Comparator.comparing(MealWithExceed::getDateTime).reversed())
+                .collect(toList());
+    }
+
 }
 

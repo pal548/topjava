@@ -31,12 +31,12 @@ public class MealRestController {
 
     public List<MealWithExceed> getAll() {
         log.info("getAll");
-        return getAllFiltered(null, null, null, null);
+        return service.getAll(authUserId(), authUserCaloriesPerDay());
     }
 
     public List<MealWithExceed> getAllFiltered(LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2) {
         log.info("getAllFiltered, userId={} dates={}..{}, times={}..{}", authUserId(), date1, date2, time1, time2);
-        return MealsUtil.getWithExceeded(service.getAllFiltered(authUserId(), date1, date2, time1, time2), authUserCaloriesPerDay());
+        return service.getAllFiltered(authUserId(), date1, date2, time1, time2, authUserCaloriesPerDay());
     }
 
     public Meal create(Meal meal) {

@@ -90,7 +90,14 @@ public class MealServlet extends HttpServlet {
                 LocalDate dateEnd = dateEndS == null || dateEndS.isEmpty() ? null : LocalDate.parse(dateEndS);
                 LocalTime timeBeg = timeBegS == null || timeBegS.isEmpty() ? null : LocalTime.parse(timeBegS);
                 LocalTime timeEnd = timeEndS == null || timeEndS.isEmpty() ? null : LocalTime.parse(timeEndS);
-                request.setAttribute("meals", controller.getAllFiltered(dateBeg, dateEnd, timeBeg, timeEnd));
+                if (dateBeg == null
+                    && dateEnd == null
+                    && timeBeg == null
+                    && timeEnd == null  ) {
+                    request.setAttribute("meals", controller.getAll());
+                } else {
+                    request.setAttribute("meals", controller.getAllFiltered(dateBeg, dateEnd, timeBeg, timeEnd));
+                }
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

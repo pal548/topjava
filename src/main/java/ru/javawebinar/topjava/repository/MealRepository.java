@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealWithExceed;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +14,7 @@ public interface MealRepository {
 
     Meal get(int userId, int id);
 
-    List<Meal> getAll(int userId);
+    List<MealWithExceed> getAll(int userId, int calories);
 
-    List<Meal> getAllFiltered(int userId, LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2);
+    List<MealWithExceed> getAllFiltered(int userId, LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2, int calories);
 }
