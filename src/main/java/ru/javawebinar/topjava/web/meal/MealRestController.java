@@ -36,7 +36,11 @@ public class MealRestController {
 
     public List<MealWithExceed> getAllFiltered(LocalDate date1, LocalDate date2, LocalTime time1, LocalTime time2) {
         log.info("getAllFiltered, userId={} dates={}..{}, times={}..{}", authUserId(), date1, date2, time1, time2);
-        return service.getAllFiltered(authUserId(), date1, date2, time1, time2, authUserCaloriesPerDay());
+        LocalDate date11 = date1 == null ? LocalDate.MIN : date1;
+        LocalDate date22 = date2 == null ? LocalDate.MAX : date2;
+        LocalTime time11 = time1 == null ? LocalTime.MIN : time1;
+        LocalTime time22 = time2 == null ? LocalTime.MAX : time2;
+        return service.getAllFiltered(authUserId(), date11, date22, time11, time22, authUserCaloriesPerDay());
     }
 
     public Meal create(Meal meal) {
