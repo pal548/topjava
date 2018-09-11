@@ -64,7 +64,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (map == null) {
             return Collections.emptyList();
         } else {
-            Collection<Meal> mealsInDates = getUserMealsMap(userId).values().stream()
+            Collection<Meal> mealsInDates = map.values().stream()
                     .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime().toLocalDate(), date1, date2))
                     .collect(Collectors.toList());
             return MealsUtil.getWithExceeded(mealsInDates, calories).stream()
